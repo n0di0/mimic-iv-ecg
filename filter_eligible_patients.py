@@ -2,14 +2,17 @@
 What it does: 
 - Filters the record_list.csv down to patients with more than one study to make sure we work with good samples
 - Collects subject and study id, and generates the exact file paths to download
+- Cross references theoretically eligible records against the record_list.csv to see what patients on disk have >=2 studies.
 
 Input:
 - record_list.csv, the MIMIC-IV-ECG patient/study index
+- downloaded_study_ids.txt, one study_id per line, from 'find . -name "*dat"' command
 
 Output:
 - eligible_patients.csv, with each relevant subject_id and how many studies they have
 - eligible_records.csv, filtered record_list
 - download_paths.txt, for .hea and .dat
+- prints the real "N-elig", how many eligible patients are confirmed on disk
 """
 
 import pandas as pd
@@ -47,4 +50,47 @@ def main(record_list_path: str):
 
     print("\nWrote: eligible_patients.csv, eligible_records.csv, download_paths.txt")
 
+def check_downloaded_eligibility(eligible_records_path: str, downloaded_ids_path: str):
+    """
+    Cross-references the theoretical eligible_records.csv (computed against
+    the full record_list.csv) with what's actually been downloaded, to find
+    out how many patients have >=2 studies ACTUALLY ON DISK.
+
+    Input:
+    - eligible_records.csv, from main() above
+    - downloaded_study_ids.txt, one study_id per line, from `find . -name "*.dat"`
+
+    Output:
+    - eligible_records_downloaded.csv, eligible records that are actually downloaded
+    - prints the real Nelig (eligible patient count) for the data you actually have
+    """
+    eligible = pd.read_csv(eligible_records_path, dtype=str)
+
+    with open(downloaded_ids_path) as f:
+        downloaded = set(line.strip() for line in f if line.strip())
+
+    print(f"Theoretically eligible records (full dataset): {len(eligible)}")
+    print(f"Study_ids actually downloaded: {len(downloaded)}")
+
+    eligible["downloaded"] = eligible["study_id"].isin(downloaded)
+    on_disk = eligible[eligible["downloaded"]].copy()
+
+    print(f"Eligible records actually on disk: {len(on_disk)}")
+
+    # Recount studies per patient, but only counting studies actually downloaded
+    counts_on_disk = on_disk.groupby("subject_id")["study_id"].nunique().reset_index()
+    counts_on_disk.columns = ["subject_id", "study_count_on_disk"]
+
+    truly_eligible = counts_on_disk[counts_on_disk["study_count_on_disk"] >= 2]
+    print(f"Patients with >=2 studies ACTUALLY DOWNLOADED: {len(truly_eligible)}")
+
+    truly_eligible_ids = set(truly_eligible["subject_id"])
+    final = on_disk[on_disk["subject_id"].isin(truly_eligible_ids)]
+    final.to_csv("eligible_records_downloaded.csv", index=False)
+    print(f"\nWrote eligible_records_downloaded.csv with {len(final)} rows, "
+          f"{final['subject_id'].nunique()} patients")
+
+
+# Run both steps
 main("record_list.csv")
+check_downloaded_eligibility("eligible_records.csv", "downloaded_study_ids.txt")

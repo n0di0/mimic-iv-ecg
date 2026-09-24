@@ -38,6 +38,8 @@ It will run for hours, so protect it in case you lose connection or close the te
 - Visually and easily examine the file using your file explorer GUI with the command: explorer.exe .
 - Afterwards, run: tmux attach -t mimic_download | aws s3 sync s3://**<your-confirmed-path>**/ MimicDataAWS
 
+***
+
 I have a copy of the sample on my machine, but I feel like acquiring it from AWS would be quicker and safer.
 Let me know if you have any questions, pop this into your AI of choice to walk through as well.
 Once everyone has the same basic files downloaded, we can then filter through the patient_ids using my script in GitHub.

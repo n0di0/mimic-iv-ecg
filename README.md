@@ -32,8 +32,8 @@ temp workspace for wfu buildathon!
 - Target sample size, 30k eligible patients, ~18GB (19GB to be safe)
 - Downloaded well over sample size, ~28GB/~90GB, which will be great to work with for now
 - Investigated AWS S3 as an alternative to download instead of throttled PhysioNet HTTPS
-- Set up AWS, no longer super throttled, downloaded sample size in 1.5 hours.
+- Set up AWS, no longer super throttled, downloaded sample size in 1.5 hours
 - Plan to look into whether or not the data skews, s3 sync is pulling folders in alphabetical subject_id
 - **GUIDE_download_mimiciv_awss3**, created writeup to ensure everyone can download files quickly
-- Would like to consult with Program Lead on pipeline, but for now, will stick to team plan
-- Ideal pipeline: WFDB/NumPy > Float64 > Lead I > SciPy (resample_poly) > 250Hz sampling rate > 10s length > NumPy matrix > Model Training
+- Created list of questions to ask Program Lead for pipeline, but will stick to team plan and keep lossless a priority
+- Working pipeline (should be done by EOD): WFDB/NumPy > Float64 > Lead I > SciPy (resample_poly) > 250Hz sampling rate > 10s length > NumPy matrix > Model Training

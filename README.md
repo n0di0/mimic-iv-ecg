@@ -36,4 +36,9 @@ temp workspace for wfu buildathon!
 - Plan to look into whether or not the data skews, s3 sync is pulling folders in alphabetical subject_id
 - _**GUIDE_download_mimiciv_awss3**_, created writeup to ensure everyone can download files quickly
 - Created list of questions to ask Program Lead for pipeline, but will stick to team plan and keep lossless a priority
-- Working pipeline (should be done by EOD): WFDB/NumPy > Float64 > Lead I > SciPy (resample_poly) > 250Hz sampling rate > 10s length > NumPy matrix > Model Training
+- Working pipeline (should be done by EOD): WFDB/NumPy > Float64 > Lead I > SciPy (resample_poly) > 250Hz sampling rate > 10s length > NumPy matrix > Model Training, will propose to other teammates
+- Tested current ~28GB Mimic sample's potential skew by alphabetical subject_id download, ruled it would not be a problem and the time distribution was very wide
+- Calculated that sample data contained 50k unique patients, with 32k patients with 2+ studies, perfect for Machine Learning and model training
+- Need to coordinate how many will be in train (70%), validation(15%), and local test (15%)
+- Updated _**filter_eligible_patients.csv**_ to allow teammates to regenerate their own eligible_records_downloaded.csv file based on the dataset that they have if not SSOT yet
+- Creating code for script _**patient_splitter.py**_ to separate training, validation, and local test models 

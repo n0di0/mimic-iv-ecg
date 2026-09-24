@@ -35,7 +35,7 @@ It will run for hours, so protect it in case you lose connection or close the te
 - Attaching and reattaching just means the session can continue in the background 
 - To stop the download, hit Ctrl+C, the aws s3 sync process will stop cleanly
 - To resume the download in tmux, run these commands:
-- To see the progress you have in the file, run: du -sh MimicDataAWS
+- Visually and easily examine the file using your file explorer GUI with the command: explorer.exe .
 - Afterwards, run: tmux attach -t mimic_download | aws s3 sync s3://**<your-confirmed-path>**/ MimicDataAWS
 
 I have a copy of the sample on my machine, but I feel like acquiring it from AWS would be quicker and safer.

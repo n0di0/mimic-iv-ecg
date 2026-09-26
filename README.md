@@ -41,4 +41,18 @@ temp workspace for wfu buildathon!
 - Calculated that sample data contained 50k unique patients, with 32k patients with 2+ studies, perfect for Machine Learning and model training
 - Need to coordinate how many will be in train (70%), validation(15%), and local test (15%)
 - Updated _**filter_eligible_patients.csv**_ to allow teammates to regenerate their own eligible_records_downloaded.csv file based on the dataset that they have if not SSOT yet
-- Creating code for script _**patient_splitter.py**_ to separate training, validation, and local test models 
+- Creating code for script _**patient_splitter.py**_ to separate training, validation, and local test models
+
+[9-25-26] DATA
+- Confirmed final trustworthy patient numbers, 250k unique study_ids, N-elig 32k eligible patients
+- Redesigned _**filter_eligible_patients.py**_, pushed to repo
+- Wrote _**split_manifest.json**_ for additional verification, SHA-256 hashes, and check results to ensure data matching
+- Confirmed final verified split: Train 22k, Val 4.8k, Test 4.8k. 
+- Built _**check_my_downloads.py**_ so teammates can make sure they hold the same necessary files from canonical set, and helps them detect if any of their patients are partials
+- Wrote _**GUIDE_data_sync.md**_, documented how to sync data based on _**check_my_downloads.py**_, to ensure we all have the same source of truth
+- Redesigned _**ingest.py**_, reinforced the data into ML and preservation layers for experimentation on best optimization methods
+- Split ECG from one file into two, metadata and participant metadata, using Paticipant ID as index as advised from team plan
+- Identified data quality bugs in 307 records, will identify patient 11992999 to Clinical
+- Verified ML matrix (232449, 2500 float 32, no NaN/Inf values) and all checksums
+- Wrote README in the Google Drive describing all deliverables, preservation files, verification files, and dataset definition files
+- Uploaded all relevant project files to Google Drive in respective folders

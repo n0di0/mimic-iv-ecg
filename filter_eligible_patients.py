@@ -1,5 +1,5 @@
 """
-What it does: 
+What it does:
 - Filters the record_list.csv down to patients with more than one study to make sure we work with good samples
 - Collects subject and study id, and generates the exact file paths to download
 - Cross references theoretically eligible records against the record_list.csv to see what patients on disk have >=2 studies.
@@ -12,10 +12,21 @@ Output:
 - eligible_patients.csv, with each relevant subject_id and how many studies they have
 - eligible_records.csv, filtered record_list
 - download_paths.txt, for .hea and .dat
+- eligible_records_downloaded.csv, from the --check-downloaded step
 - prints the real "N-elig", how many eligible patients are confirmed on disk
+
+Usage:
+    # Step 1 (run once, whenever record_list.csv changes -- it hasn't since 9/23):
+    python3 filter_eligible_patients.py --build --record-list record_list.csv
+
+    # Step 2 (run anytime you want a fresh on-disk eligibility count):
+    python3 filter_eligible_patients.py --check-downloaded \
+        --eligible eligible_records.csv --downloaded downloaded_study_ids.txt
 """
 
+import argparse
 import pandas as pd
+
 
 def main(record_list_path: str):
     df = pd.read_csv(record_list_path, dtype=str)
@@ -49,6 +60,7 @@ def main(record_list_path: str):
             f.write(f"files/{shard}/p{subject_id}/s{study_id}/{study_id}.dat\n")
 
     print("\nWrote: eligible_patients.csv, eligible_records.csv, download_paths.txt")
+
 
 def check_downloaded_eligibility(eligible_records_path: str, downloaded_ids_path: str):
     """
@@ -91,6 +103,22 @@ def check_downloaded_eligibility(eligible_records_path: str, downloaded_ids_path
           f"{final['subject_id'].nunique()} patients")
 
 
-# Run both steps
-main("record_list.csv")
-check_downloaded_eligibility("eligible_records.csv", "downloaded_study_ids.txt")
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--build", action="store_true",
+                         help="Run the one-time build step against the full record_list.csv")
+    parser.add_argument("--check-downloaded", action="store_true",
+                         help="Cross-check eligible_records.csv against downloaded_study_ids.txt")
+    parser.add_argument("--record-list", default="record_list.csv")
+    parser.add_argument("--eligible", default="eligible_records.csv")
+    parser.add_argument("--downloaded", default="downloaded_study_ids.txt")
+    args = parser.parse_args()
+
+    if not args.build and not args.check_downloaded:
+        parser.error("Pass --build and/or --check-downloaded. See the module docstring for usage.")
+
+    if args.build:
+        main(args.record_list)
+
+    if args.check_downloaded:
+        check_downloaded_eligibility(args.eligible, args.downloaded)
